@@ -15,6 +15,7 @@ abstract public class ArticlePageObject extends MainPageObject
     OPTIONS_BUTTON,
     OPTIONS_ADD_TO_MY_READING_LIST,
     ADD_TO_MY_READING_LIST_OVERLAY,
+    OPTIONS_REMOVE_FROM_MY_LIST_BUTTON,
     MY_LIST_NAME_INPUT ,
     MY_LIST_NAME_OK,
     CLOSE_ARTICLE_BTN,
@@ -34,9 +35,11 @@ abstract public class ArticlePageObject extends MainPageObject
         WebElement title_element = waitForTitleElement();
         if (Platform.getInstance().isAndroid()) {
             return title_element.getAttribute("text");
-        } else
+        } else if (Platform.getInstance().isIOS())
         {
             return title_element.getAttribute("name");
+        } else {
+            return title_element.getText();
         }
     }
     public void swipeToFooter() {
@@ -44,10 +47,13 @@ abstract public class ArticlePageObject extends MainPageObject
             this.swipeUpToFindElement(FOOTER_ELEMENT,
                     "Cannot find the end of article",
                     40);
-        } else {
+        } else if (Platform.getInstance().isIOS())
+        {
             this.swipeUpTillElementAppear(FOOTER_ELEMENT,
                     "Cannot find the end of article",
                     40);
+        } else {
+            this.scrollWebPageTillElementNotVisible(FOOTER_ELEMENT,"Cannot find the end of article",40);
         }
     }
     public void addArticleToMyList(String nameOfFolder)
@@ -85,7 +91,9 @@ this.waitForElementPresent(
         );
     }
     public void closeArticle()
-    { if(Platform.getInstance().isAndroid()) {
+
+    { if (Platform.getInstance().isMW()) return;
+        if(Platform.getInstance().isAndroid()) {
         this.waitAndClick(
                 CLOSE_ARTICLE_BTN,
                 "Не удалось закрыть, нет кнопки выход",
@@ -129,7 +137,16 @@ this.waitForElementPresent(
         );
     }
     public void addArticlesToMySaved()
-    {
+    {if (Platform.getInstance().isMW()) this.removeArticleFromSavedIfItAdded();
         this.waitAndClick(OPTIONS_ADD_TO_MY_READING_LIST,"Cannot find option to add article to reading list", 5);
+    }
+    public void removeArticleFromSavedIfItAdded()
+    {
+        if (this.isElementPresent(OPTIONS_ADD_TO_MY_READING_LIST)){
+            this.waitAndClick(OPTIONS_ADD_TO_MY_READING_LIST,
+                    "Cannot click button to remove an article from saved", 1);
+        }
+        this.waitForElementPresent(OPTIONS_ADD_TO_MY_READING_LIST,
+                "Cannot find button to add an article to saved list after removing it from list before",5);
     }
 }

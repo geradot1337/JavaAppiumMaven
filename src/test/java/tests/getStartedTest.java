@@ -11,7 +11,7 @@ public class getStartedTest extends CoreTestCase
     @Test
     public void testPassThroughWelcome()
     {
-        if (Platform.getInstance().isAndroid()) return;
+        if ((Platform.getInstance().isAndroid() ) || (Platform.getInstance().isMW())) return;
         WelcomePageObject WelcomePageObject = new WelcomePageObject(driver);
         WelcomePageObject.waitForLearnMoreLink();
         WelcomePageObject.clickNextBtn();

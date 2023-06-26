@@ -1,10 +1,7 @@
 package tests;
 import lib.CoreTestCase;
 import lib.Platform;
-import lib.ui.ArticlePageObject;
-import lib.ui.MyListPageObject;
-import lib.ui.NavigationUI;
-import lib.ui.SearchPageObject;
+import lib.ui.*;
 import lib.ui.factories.ArticlePageObjectFactory;
 import lib.ui.factories.MyListPageObjectFactory;
 import lib.ui.factories.NavigationUIFactory;
@@ -20,7 +17,7 @@ public class MyListsTest extends CoreTestCase
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
-        SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
+        SearchPageObject.clickByArticleWithSubstring("bject-oriented programming language");
 
         ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         ArticlePageObject.waitForTitleElement();
@@ -31,9 +28,20 @@ public class MyListsTest extends CoreTestCase
         {
          ArticlePageObject.addArticlesToMySaved();
         }
+        if (Platform.getInstance().isMW()) {
+            AuthPageObject AuthPageObject = new AuthPageObject(driver);
+            AuthPageObject.clickAuthBtn();
+            AuthPageObject.enterLoginData("Geradot1337", "V123hu09stt");
+            AuthPageObject.submitForm();
+            ArticlePageObject.waitForTitleElement();
+            assertEquals("We are not same page", article_title, ArticlePageObject.getArticleTitle());
+            ArticlePageObject.addArticlesToMySaved();
+        }
         ArticlePageObject.closeArticle();
         NavigationUI NavigationUI = NavigationUIFactory.get(driver);
+        NavigationUI.openNavigation();
         NavigationUI.clickMylist();
+
 
 
         MyListPageObject MyListPageObject = MyListPageObjectFactory.get(driver);
